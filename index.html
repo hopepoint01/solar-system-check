@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>태양계 특징 플래시보드</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: 칠판에서 가독성이 좋은 폰트 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: radial-gradient(circle at center, #1b0b3b 0%, #05030a 100%);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* 반짝이는 별 배경 (우주 느낌) */
+        .stars {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            background-image: 
+                radial-gradient(2px 2px at 40px 70px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 150px 160px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 90px 40px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(3px 3px at 250px 300px, #ffffff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 300px 120px, #ffffff, rgba(0,0,0,0));
+            background-repeat: repeat;
+            background-size: 400px 400px;
+            animation: twinkle 4s infinite alternate;
+            opacity: 0.6;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.3; }
+            100% { opacity: 0.8; }
+        }
+
+        /* 3D 카드 플립 애니메이션 설정 */
+        .perspective {
+            perspective: 1000px;
+        }
+
+        .flip-card {
+            width: 100%;
+            height: 100%;
+            min-height: 100px;
+            position: relative;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        .flip-card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        /* 호버 효과 (마우스 사용 시) */
+        .flip-card:hover:not(.flipped) .flip-card-front {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: scale(1.02);
+        }
+
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 1rem;
+            padding: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        /* 앞면 (숨겨진 상태) */
+        .flip-card-front {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(4px);
+        }
+
+        /* 뒷면 (내용이 보이는 상태) */
+        .flip-card-back {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); /* Indigo to Violet */
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            transform: rotateY(180deg);
+            box-shadow: 0 10px 25px -5px rgba(124, 58, 237, 0.5);
+        }
+
+        /* 뒷면 내용 텍스트 크기 조정 */
+        .card-content {
+            font-size: 1.15rem;
+            line-height: 1.4;
+            word-break: keep-all;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        
+        @media (min-width: 1024px) {
+            .card-content {
+                font-size: 1.3rem; /* 전자칠판에서 더 크게 보이도록 */
+            }
+        }
+
+        /* 커스텀 스크롤바 (표가 길어질 경우 대비) */
+        ::-webkit-scrollbar { width: 10px; height: 10px; }
+        ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); border-radius: 8px; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 8px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.4); }
+    </style>
+</head>
+<body class="p-4 sm:p-8 flex flex-col items-center">
+
+    <div class="stars"></div>
+
+    <!-- 헤더 영역 -->
+    <header class="text-center mb-8 w-full max-w-7xl relative z-10">
+        <h1 class="text-4xl md:text-6xl font-black mb-4 text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-pink-300 to-cyan-300 drop-shadow-lg tracking-tight">
+            태양계 행성 탐구 보드 🔭
+        </h1>
+        <p class="text-xl md:text-2xl text-gray-300 font-bold mb-6">
+            궁금한 특징의 빈칸을 터치하여 숨겨진 내용을 확인해 보세요!
+        </p>
+        
+        <!-- 교사용 제어 버튼 -->
+        <div class="flex justify-center gap-4">
+            <button onclick="revealAll()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-6 rounded-full text-lg md:text-xl shadow-lg transition transform hover:scale-105">
+                👀 모두 열기
+            </button>
+            <button onclick="hideAll()" class="bg-gray-600 hover:bg-gray-500 text-white font-bold py-3 px-6 rounded-full text-lg md:text-xl shadow-lg transition transform hover:scale-105">
+                🙈 모두 가리기
+            </button>
+        </div>
+    </header>
+
+    <!-- 메인 보드 (표) 영역 -->
+    <main class="w-full max-w-[1400px] relative z-10 bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-4 md:p-8 shadow-2xl overflow-x-auto">
+        <table class="w-full min-w-[1000px] border-separate" style="border-spacing: 0.5rem 0.5rem;">
+            <thead>
+                <tr>
+                    <th class="w-1/6 py-4 text-2xl md:text-3xl font-bold text-yellow-300 bg-white/10 rounded-xl border border-white/20">천체 🪐</th>
+                    <th class="w-1/6 py-4 text-2xl md:text-3xl font-bold text-cyan-300 bg-white/10 rounded-xl border border-white/20">색깔 🎨</th>
+                    <th class="w-1/6 py-4 text-2xl md:text-3xl font-bold text-green-300 bg-white/10 rounded-xl border border-white/20">표면의 상태 🪨</th>
+                    <th class="w-1/6 py-4 text-2xl md:text-3xl font-bold text-pink-300 bg-white/10 rounded-xl border border-white/20">고리 ⭕</th>
+                    <th class="w-2/6 py-4 text-2xl md:text-3xl font-bold text-purple-300 bg-white/10 rounded-xl border border-white/20">다른 특징 💡</th>
+                </tr>
+            </thead>
+            <tbody id="board-body">
+                <!-- JavaScript를 통해 데이터가 동적으로 렌더링됩니다. -->
+            </tbody>
+        </table>
+    </main>
+
+    <script>
+        // 태양계 데이터 객체 배열 (이전 요청의 표 내용)
+        const solarSystemData = [
+            {
+                name: "태양", emoji: "☀️",
+                color: "눈부신 황백색",
+                surface: "기체 (단단한 표면이 없으며 주변보다 온도가 낮은 '흑점'이 있음)",
+                rings: "없음",
+                features: "태양계의 중심이자 유일한 별(항성)로, 스스로 막대한 빛과 열을 뿜어냅니다."
+            },
+            {
+                name: "수성", emoji: "🌑",
+                color: "회색",
+                surface: "암석 (달처럼 크레이터가 많음)",
+                rings: "없음",
+                features: "태양과 가장 가깝고, 낮과 밤의 표면 온도 차이가 태양계에서 가장 큽니다."
+            },
+            {
+                name: "금성", emoji: "⭐",
+                color: "노란색 (황백색)",
+                surface: "암석 (평원과 화산 지형)",
+                rings: "없음",
+                features: "두꺼운 이산화탄소 대기 때문에 온실효과가 발생하여 표면이 가장 뜨겁습니다."
+            },
+            {
+                name: "지구", emoji: "🌍",
+                color: "파란색, 흰색, 초록색",
+                surface: "암석 (육지와 바다)",
+                rings: "없음",
+                features: "풍부한 물과 공기가 존재하여 현재까지 알려진 바로는 유일하게 생명체가 살고 있습니다."
+            },
+            {
+                name: "화성", emoji: "🔴",
+                color: "붉은색",
+                surface: "암석 (붉은 흙과 얼음 극관)",
+                rings: "없음",
+                features: "산화철 때문에 표면이 붉게 보이며, 과거에 물이 흘렀던 흔적이 계곡 형태로 남아 있습니다."
+            },
+            {
+                name: "목성", emoji: "🟠",
+                color: "주황색, 갈색, 흰색 띠",
+                surface: "기체 (단단한 표면 없음)",
+                rings: "있음 (매우 얇음)",
+                features: "태양계 행성 중 부피가 가장 크며, 표면에 거대한 붉은 점(대적점)이 소용돌이칩니다."
+            },
+            {
+                name: "토성", emoji: "🪐",
+                color: "연한 노란색",
+                surface: "기체 (단단한 표면 없음)",
+                rings: "있음 (크고 뚜렷함)",
+                features: "밀도가 물보다 낮아 물에 뜰 수 있을 정도이며, 얼음과 암석 조각으로 이루어진 아름다운 고리가 있습니다."
+            },
+            {
+                name: "천왕성", emoji: "🩵",
+                color: "청록색",
+                surface: "기체와 얼음",
+                rings: "있음 (얇음)",
+                features: "대기 중의 메테인 가스 때문에 청록색으로 보이며, 자전축이 거의 90도로 누운 채로 태양 주위를 돕니다."
+            },
+            {
+                name: "해왕성", emoji: "🔵",
+                color: "짙은 파란색",
+                surface: "기체와 얼음",
+                rings: "있음 (매우 얇음)",
+                features: "태양에서 가장 멀리 떨어져 있으며, 표면에 검고 거대한 점(대암점)이 나타나기도 합니다."
+            }
+        ];
+
+        // 칠판에 데이터를 렌더링하는 함수
+        function renderBoard() {
+            const tbody = document.getElementById('board-body');
+            
+            solarSystemData.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                
+                // 첫 번째 열: 천체 이름 (항상 보임)
+                const nameTd = document.createElement('td');
+                nameTd.className = "p-2";
+                nameTd.innerHTML = `
+                    <div class="h-full bg-white/20 rounded-xl p-4 flex flex-col items-center justify-center border-2 border-transparent text-center h-[120px]">
+                        <span class="text-4xl mb-2 drop-shadow-md">${item.emoji}</span>
+                        <span class="text-2xl md:text-3xl font-black tracking-widest">${item.name}</span>
+                    </div>
+                `;
+                tr.appendChild(nameTd);
+
+                // 속성들을 배열로 묶어서 반복 처리
+                const attributes = [item.color, item.surface, item.rings, item.features];
+                
+                attributes.forEach(attr => {
+                    const td = document.createElement('td');
+                    td.className = "p-1 perspective";
+                    
+                    // 각 셀을 뒤집을 수 있는 카드로 생성
+                    td.innerHTML = `
+                        <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                            <div class="flip-card-front flex-col text-gray-300">
+                                <span class="text-3xl md:text-5xl mb-2 opacity-50">👆</span>
+                                <span class="text-lg md:text-xl font-bold">터치하여 확인</span>
+                            </div>
+                            <div class="flip-card-back">
+                                <span class="card-content font-bold text-center">${attr}</span>
+                            </div>
+                        </div>
+                    `;
+                    tr.appendChild(td);
+                });
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        // 전체 카드 열기
+        function revealAll() {
+            const cards = document.querySelectorAll('.flip-card');
+            cards.forEach(card => card.classList.add('flipped'));
+        }
+
+        // 전체 카드 닫기
+        function hideAll() {
+            const cards = document.querySelectorAll('.flip-card');
+            cards.forEach(card => card.classList.remove('flipped'));
+        }
+
+        // 페이지 로드 시 렌더링 실행
+        window.onload = renderBoard;
+    </script>
+</body>
+</html>
